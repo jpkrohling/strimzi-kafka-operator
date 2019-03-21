@@ -1314,21 +1314,27 @@ public class KafkaClusterTest {
 
     @Test
     public void testReplicationPortNetworkPolicy() {
-        NetworkPolicyPeer peer1 = new NetworkPolicyPeerBuilder()
+        NetworkPolicyPeer kafkaBrokersPeer = new NetworkPolicyPeerBuilder()
                 .withNewPodSelector()
                 .withMatchLabels(Collections.singletonMap(Labels.STRIMZI_NAME_LABEL, KafkaCluster.kafkaClusterName(cluster)))
                 .endPodSelector()
                 .build();
 
-        NetworkPolicyPeer peer2 = new NetworkPolicyPeerBuilder()
+        NetworkPolicyPeer eoPeer = new NetworkPolicyPeerBuilder()
                 .withNewPodSelector()
                 .withMatchLabels(Collections.singletonMap(Labels.STRIMZI_NAME_LABEL, EntityOperator.entityOperatorName(cluster)))
                 .endPodSelector()
                 .build();
 
-        NetworkPolicyPeer peer3 = new NetworkPolicyPeerBuilder()
+        NetworkPolicyPeer kafkaExporterPeer = new NetworkPolicyPeerBuilder()
                 .withNewPodSelector()
                 .withMatchLabels(Collections.singletonMap(Labels.STRIMZI_NAME_LABEL, KafkaExporter.kafkaExporterName(cluster)))
+                .endPodSelector()
+                .build();
+
+        NetworkPolicyPeer clusterOperatorPeer = new NetworkPolicyPeerBuilder()
+                .withNewPodSelector()
+                .withMatchLabels(Collections.singletonMap(Labels.STRIMZI_KIND_LABEL, "cluster-operator"))
                 .endPodSelector()
                 .build();
 
@@ -1341,10 +1347,11 @@ public class KafkaClusterTest {
 
         List<NetworkPolicyPeer> rules = np.getSpec().getIngress().stream().filter(ing -> ing.getPorts().get(0).getPort().equals(new IntOrString(KafkaCluster.REPLICATION_PORT))).map(NetworkPolicyIngressRule::getFrom).findFirst().orElse(null);
 
-        assertEquals(3, rules.size());
-        assertTrue(rules.contains(peer1));
-        assertTrue(rules.contains(peer2));
-        assertTrue(rules.contains(peer3));
+        assertEquals(4, rules.size());
+        assertTrue(rules.contains(kafkaBrokersPeer));
+        assertTrue(rules.contains(eoPeer));
+        assertTrue(rules.contains(kafkaExporterPeer));
+        assertTrue(rules.contains(clusterOperatorPeer));
     }
 
     @Test

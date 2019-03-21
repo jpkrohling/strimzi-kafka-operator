@@ -240,7 +240,9 @@ public class KafkaAssemblyOperatorMockTest {
 
     private ResourceOperatorSupplier supplierWithMocks() {
         ZookeeperLeaderFinder leaderFinder = ResourceUtils.zookeeperLeaderFinder(vertx, mockClient);
-        return new ResourceOperatorSupplier(vertx, mockClient, leaderFinder, new PlatformFeaturesAvailability(true, kubernetesVersion), 2_000);
+        return new ResourceOperatorSupplier(vertx, mockClient, leaderFinder,
+                ResourceUtils.adminClientProvider(),
+                new PlatformFeaturesAvailability(true, kubernetesVersion), 2_000);
     }
 
     private KafkaAssemblyOperator createCluster(TestContext context) {
