@@ -2,7 +2,7 @@
  * Copyright Strimzi authors.
  * License: Apache License 2.0 (see the file LICENSE or http://apache.org/licenses/LICENSE-2.0.html).
  */
-package io.strimzi.operator.user.operator;
+package io.strimzi.operator.common;
 
 import java.security.SecureRandom;
 
@@ -14,6 +14,7 @@ public class PasswordGenerator {
     private final int length;
     private final String firstCharacterAlphabet;
     private final String alphabet;
+
 
     /**
      * Constructor to initialize the PasswordGenerator with alphabets and password length.
@@ -28,6 +29,14 @@ public class PasswordGenerator {
         this.length = length;
         this.firstCharacterAlphabet = firstCharacterAlphabet;
         this.alphabet = alphabet;
+    }
+
+    public PasswordGenerator(int length) {
+        this(length, "abcdefghijklmnopqrstuvwxyz" +
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                "abcdefghijklmnopqrstuvwxyz" +
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+                "0123456789");
     }
 
     /**
